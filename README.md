@@ -24,9 +24,16 @@ solidny pakiet optymalizacji wydajności i baterii, opisany niżej.
 Oficjalny LineageOS nie ma roota. Ten build ma wkompilowane w jądro wsparcie dla
 **[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next)** — nowocześniejszej gałęzi popularnego
 KernelSU, działającej na poziomie jądra (nie jako modyfikacja `/system` jak starsze rozwiązania). Manager
-KernelSU-Next **instaluje się osobno po flashu** (pobierz z [oficjalnego repo](https://github.com/KernelSU-Next/KernelSU-Next/releases))
-— to jedyny element, który nie mieści się w samym obrazie systemu z przyczyn technicznych (wymogi
-podpisu APK na Androidzie 16), root działa identycznie jak przy instalacji systemowej.
+KernelSU-Next **instaluje się osobno po flashu** — to jedyny element, który nie mieści się w samym obrazie
+systemu z przyczyn technicznych (wymogi podpisu APK na Androidzie 16); root działa identycznie jak przy
+instalacji systemowej. Jądro rozpoznaje manager po certyfikacie podpisu, więc obie oficjalne wersje z
+[releases KernelSU-Next v3.3.0](https://github.com/KernelSU-Next/KernelSU-Next/releases/tag/v3.3.0) działają:
+
+- `KernelSU_Next_v3.3.0_33214-release.apk` — standardowa,
+- `KernelSU_Next_v3.3.0-spoofed_33214-release.apk` — **zalecana**: ta sama funkcjonalność i ten sam podpis,
+  ale ukryta prawdziwa nazwa pakietu, żeby proste sprawdzenia roota w aplikacjach bankowych (szukające po
+  nazwie pakietu managera) jej nie wykryły. Nie omija zaawansowanej weryfikacji integralności (Play
+  Integrity) — to załatwia osobno wbudowany PIF.
 
 ### Usługi Google: lekki zestaw, ale z działającą Kontrolą rodzicielską i Android Auto
 
