@@ -1,6 +1,172 @@
-# rhode releases
+# LineageOS 23.2 dla Motorola Moto G52 (rhode)
 
-Buildy LineageOS 23.2 dla Moto G52 (`rhode`) z przepisu [rhode-los23.2](https://github.com/MikolajQ/rhode-los23.2).
-Każdy release zawiera zip ROM-u oraz `boot.img`, `dtbo.img`, `vendor_boot.img` (do wejścia w recovery przy pierwszej instalacji).
+Nieoficjalny, spersonalizowany build LineageOS 23.2 (Android 16 QPR2) dla **Motorola Moto G52** (`rhode`,
+Snapdragon 680 / SM6225), zbudowany od zera z bieżących źródeł. Bazuje na tym samym drzewie co
+zoptymalizowane buildy [Tomoms](https://github.com/tomoms) dla tego urządzenia, ale dokłada własną warstwę
+funkcji i zamienia część komponentów tam, gdzie ich upstream przestał być dostępny lub nie odpowiadał
+naszym potrzebom (root, kontrola rodzicielska, prywatność sieciowa).
 
-`23.x/rhode.json` — endpoint dla wbudowanego Updatera (`lineage.updater.uri`), aktualizowany przez `upload.sh` po każdym buildzie.
+**Pobierz:** [najnowszy release](../../releases/latest) — zip ROM-u + `boot.img`, `dtbo.img`, `vendor_boot.img`.
+**Jak zbudować własną kopię:** przepis źródłowy w [rhode-los23.2](https://github.com/MikolajQ/rhode-los23.2).
+
+---
+
+## Czego tu nie znajdziesz z domyślnego LineageOS
+
+Standardowy LineageOS jest celowo minimalistyczny — czysty AOSP plus garść ulepszeń Lineage (Trebuchet,
+Aperture, motyw). Ten build dokłada do tego cztery grupy rzeczy, których w oficjalnych buildach nie ma
+w ogóle: **root**, **usługi Google w wersji okrojonej i naprawionej**, **blokowanie treści wbudowane
+w system** oraz **przeglądarkę systemową skupioną na prywatności**. Do tego dziedziczy po drzewie źródłowym
+solidny pakiet optymalizacji wydajności i baterii, opisany niżej.
+
+### Root: KernelSU-Next
+
+Oficjalny LineageOS nie ma roota. Ten build ma wkompilowane w jądro wsparcie dla
+**[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next)** — nowocześniejszej gałęzi popularnego
+KernelSU, działającej na poziomie jądra (nie jako modyfikacja `/system` jak starsze rozwiązania). Manager
+KernelSU-Next **instaluje się osobno po flashu** (pobierz z [oficjalnego repo](https://github.com/KernelSU-Next/KernelSU-Next/releases))
+— to jedyny element, który nie mieści się w samym obrazie systemu z przyczyn technicznych (wymogi
+podpisu APK na Androidzie 16), root działa identycznie jak przy instalacji systemowej.
+
+### Usługi Google: lekki zestaw, ale z działającą Kontrolą rodzicielską i Android Auto
+
+Zamiast pełnego pakietu Google Apps (setki MB Asystenta, Google TV, Wellbeing, itd.) build zawiera **okrojony
+zestaw w stylu NikGapps core** — tylko to, co potrzebne żeby telefon normalnie działał z kontem Google:
+
+- Google Play Services (GmsCore), Sklep Play, Google Services Framework,
+- synchronizacja kontaktów i kalendarza z kontem Google,
+- **Android Auto z pełną listą uprawnień** (71 uprawnień systemowych zamiast okrojonych 19 z typowych paczek
+  GApps) — bezprzewodowe Android Auto działa od razu, bez grzebania w ustawieniach dewelopera,
+- **w pełni działająca Kontrola rodzicielska Google (Family Link)** — naprawiony powszechny błąd, przez
+  który konto dziecka wisi w nieskończoność na ekranie „Przygotowuję kolejne kroki" (przyczyna: usługa
+  nadzoru instaluje się jako zwykła, nieuprzywilejowana aplikacja; ten build dostarcza ją jako
+  uprzywilejowaną aplikację systemową, więc Google Play może ją poprawnie zaktualizować).
+
+Z pełnego pakietu GApps świadomie wycięto (oszczędność ~385 MB): Asystenta Google, usługi mowy Google,
+TalkBack, Digital Wellbeing, kopię zapasową Google Restore, integrację z kontaktami Exchange i dialerem
+Google. Nic z tego nie jest potrzebne do normalnego działania konta Google i można to doinstalować ręcznie,
+jeśli komuś zależy.
+
+### Wbudowany bloker treści — dwie niezależne warstwy
+
+W przeciwieństwie do zwykłych ROM-ów, gdzie blokowanie reklam/treści dla dorosłych wymaga osobnej aplikacji
+(zwykle działającej jako VPN, zajmującej pamięć i slot VPN), tutaj filtrowanie jest wbudowane w system i nie
+zużywa żadnych dodatkowych zasobów:
+
+1. **Domyślny prywatny DNS (DoT) ustawiony na AdGuard DNS Family** — blokuje reklamy i trackery, treści dla
+   dorosłych, wymusza bezpieczne wyszukiwanie i tryb ograniczony YouTube. Konfigurowalny w Ustawieniach
+   (Sieć i internet → Prywatny DNS) — można zmienić na inny serwer albo wyłączyć.
+2. **Lista `/system/etc/hosts` wpieczona w obraz systemu** — niezależna od ustawień DNS, działa nawet gdy
+   ktoś wyłączy prywatny DNS. Blokuje strony dla dorosłych i media społecznościowe (Instagram, TikTok,
+   Facebook, Snapchat, Reddit, Twitter/X…) oraz popularne komunikatory poza WhatsAppem i Signalem (Telegram
+   w wersji web, Discord, Viber, Skype). **WhatsApp i Signal celowo pozostają w pełni funkcjonalne** — łącznie
+   z transferem mediów, który inaczej skonfigurowana lista blokowałaby przypadkowo. Listę można rozszerzyć
+   po zainstalowaniu roota (np. aplikacją AdAway).
+
+### Przeglądarka systemowa: Cromite zamiast domyślnej
+
+Systemowy WebView (silnik, którego używają wszystkie aplikacje pokazujące strony internetowe wewnątrz siebie)
+to **[Cromite](https://www.cromite.org/)** — fork Chromium z wbudowanym blokowaniem reklam i wzmocnioną
+prywatnością, zamiast standardowego WebView AOSP czy Google Chrome.
+
+### F-Droid gotowy do użycia
+
+Wbudowany oficjalny klient F-Droid ma od razu skonfigurowane trzy dodatkowe repozytoria — nie trzeba ich
+dodawać ręcznie:
+
+- **[IzzyOnDroid](https://apt.izzysoft.de/fdroid/)** — duży katalog aplikacji spoza głównego repozytorium F-Droid,
+- **[NewPipe](https://newpipe.net/)** — oficjalne repozytorium klienta YouTube/mediów bez reklam i śledzenia,
+- **[IronFox](https://ironfoxoss.org/)** — przeglądarka mobilna skupiona na prywatności.
+
+### Własny kanał aktualizacji
+
+Build ma niezależny kanał OTA (Ustawienia → Aktualizator) — aktualizacje przychodzą z tego repozytorium, nie
+z buildów Tomomsa, więc dostajesz dokładnie tę konfigurację, nie inną.
+
+---
+
+## Rodzaje zastosowanych optymalizacji
+
+Ten build dziedziczy po drzewie źródłowym szeroki zestaw optymalizacji wydajności, baterii i pamięci,
+wykraczający poza to, co oferuje czysty AOSP/LineageOS. Poniżej — pogrupowane według warstwy systemu.
+
+### Kompilator i jądro
+
+- **ThinLTO** (Link-Time Optimization) dla jądra Linux — kompilator optymalizuje kod na poziomie całego
+  jądra naraz, nie pojedynczych plików, co daje szybszy i mniejszy kod wynikowy.
+- **Polly** — zaawansowany framework optymalizacji pętli (autovektoryzacja, poliedryczna optymalizacja
+  planowania instrukcji) włączony w kompilacji jądra.
+- **CFI (Control Flow Integrity)** — sprzętowe/kompilatorowe zabezpieczenie przed przejęciem kontroli nad
+  przepływem programu w jądrze (ochrona przed konkretną klasą exploitów).
+- **Simple LMK** zamiast standardowego `lmkd` — lżejszy, szybszy mechanizm zabijania procesów przy niskiej
+  pamięci.
+- **MGLRU (Multi-Generational LRU)** — nowocześniejszy algorytm zarządzania pamięcią podręczną stron w
+  jądrze, zmniejszający zacinanie się systemu przy dużym obciążeniu pamięci.
+- **TEO (Timer Events Oriented)** — governor cpuidle dobierający głębokość uśpienia rdzeni CPU na podstawie
+  nadchodzących zdarzeń czasowych, zamiast prostych heurystyk.
+- Binder backportowany z nowszego jądra (Linux 5.4) — szybsza komunikacja międzyprocesowa.
+- Strojenie schedulera WALT: progi migracji zadań między rdzeniami wydajnymi/oszczędnymi (`sched_upmigrate`/
+  `sched_downmigrate`), krzywe governora `schedutil` (`hispeed_freq`, `hispeed_load`) dobrane osobno dla
+  wariantu SoC tego urządzenia.
+
+### System i runtime aplikacji (ART)
+
+- Aktualizacje środowiska uruchomieniowego ART (maszyna wirtualna Androida) prosto z gałęzi rozwojowej
+  AOSP, wyprzedzające to, co trafia do oficjalnych wydań.
+- Usunięte instrukcje debugowania/śledzenia z ART niepotrzebne na buildzie produkcyjnym — mniejszy narzut
+  na każde uruchomienie aplikacji.
+- Zoptymalizowane rutyny biblioteki `bionic` (libc Androida) — m.in. szybsza implementacja `fmodf` i
+  natywna obsługa właściwości systemowych zamiast pośrednictwa przez wolniejsze warstwy.
+- **jemalloc** jako domyślny alokator pamięci systemowej zamiast standardowego — zazwyczaj mniejsza
+  fragmentacja pamięci i szybsze alokacje przy typowym obciążeniu aplikacjami mobilnymi.
+- Strojenie dexopt (wstępnej kompilacji aplikacji) i wyłączenie generowania zbędnych metadanych debugowania
+  przy pakowaniu obrazu systemowego.
+- Masowe wycięcie zbędnego logowania (`logspam`) w kluczowych usługach systemowych (SystemUI, AppOps,
+  menedżer procesów, silnik renderowania `hwui`, harmonogram zadań) — mniej pracy CPU na pisanie do bufora
+  logów, którego i tak nikt nie czyta na co dzień.
+
+### Wyświetlacz i bateria
+
+- Adaptacyjne odświeżanie 90 Hz ze schodzeniem do 60 Hz po 500 ms bezczynności ekranu — płynność przy
+  interakcji, oszczędność baterii przy statycznym obrazie.
+- Zarządzanie energią radia Wi-Fi (tryby oszczędzania IMPS/BMPS) aktywne domyślnie.
+- `zram` jako skompresowana pamięć wymiany (70% RAM) — więcej efektywnej pamięci operacyjnej bez fizycznego
+  jej dokładania, kosztem niewielkiego obciążenia CPU przy kompresji.
+- Strojenie wyprzedzającego odczytu (`readahead`) z pamięci masowej, dobrane pod konkretny typ nośnika w
+  tym urządzeniu.
+
+### Prywatność sieciowa (domyślne ustawienia)
+
+- Serwery NTP, SUPL (asysta GPS) i URL-e portalu przechwytującego przełączone z Google na alternatywy
+  szanujące prywatność (m.in. pool.ntp.org, serwery GrapheneOS) — telefon nie odpytuje infrastruktury
+  Google przy każdym starcie i połączeniu z siecią, nawet bez konta Google.
+- Wbudowana obsługa wielu dostawców prywatnego DNS (DNS-over-TLS) do wyboru w ustawieniach.
+- Wsparcie Play Integrity (przechodzi weryfikację integralności Google przy dostarczeniu własnego pliku
+  `keybox.xml` w Ustawieniach → Lineage Extras) — aplikacje bankowe i inne wymagające certyfikacji
+  działają normalnie mimo niestandardowego systemu.
+
+---
+
+## Instalacja
+
+Postępuj według [oficjalnej instrukcji instalacji LineageOS dla rhode](https://wiki.lineageos.org/devices/rhode/install),
+podmieniając oficjalny zip na ten z [releases tego repozytorium](../../releases/latest). Obrazy `boot.img`,
+`dtbo.img` i `vendor_boot.img` z tego samego release'u są potrzebne do wejścia w recovery przy pierwszej
+instalacji.
+
+> **Uwaga:** ten build jest podpisany własnymi kluczami, różnymi od kluczy oficjalnego LineageOS i od kluczy
+> testowych. Instalacja na urządzeniu z innym ROM-em (w tym oficjalnym LineageOS) wymaga pełnego
+> wyczyszczenia danych (`wipe`) — Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
+
+## Podziękowania
+
+Ten build nie powstałby bez pracy zespołu [LineageOS](https://lineageos.org/), maintainera drzewa źródłowego
+[Tomoms](https://github.com/tomoms), projektów [KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next),
+[Cromite](https://www.cromite.org/), [MindTheGapps](https://gitlab.com/MindTheGapps), [NikGapps](https://nikgapps.com/),
+[F-Droid](https://f-droid.org/), oraz społeczności [StevenBlack/hosts](https://github.com/StevenBlack/hosts) i
+[AdGuard](https://adguard-dns.io/).
+
+---
+
+*Przepis buildu (dla chcących zbudować własną kopię lub prześledzić dokładnie, co i jak zostało zmienione):
+[rhode-los23.2](https://github.com/MikolajQ/rhode-los23.2).*
