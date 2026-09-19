@@ -156,14 +156,26 @@ wykraczający poza to, co oferuje czysty AOSP/LineageOS. Poniżej — pogrupowan
 
 ## Instalacja
 
-Postępuj według [oficjalnej instrukcji instalacji LineageOS dla rhode](https://wiki.lineageos.org/devices/rhode/install),
-podmieniając oficjalny zip na ten z [releases tego repozytorium](../../releases/latest). Obrazy `boot.img`,
-`dtbo.img` i `vendor_boot.img` z tego samego release'u są potrzebne do wejścia w recovery przy pierwszej
-instalacji.
+> **Build 20260918 nie nadaje się do instalacji** — pętla rozruchu (błędna nazwa pakietu WebView w konfiguracji;
+> poprawione w źródłach, czeka na kolejny build). Zostawiony jako pre-release do celów historycznych.
+
+Urządzenie ma Virtual A/B — **kolejność kroków ma znaczenie** (jest zgodna z [wiki LineageOS](https://wiki.lineageos.org/devices/devon/install/)):
+
+1. Telefon w bootloaderze: `fastboot boot boot.img` (z tego samego release'u co zip) → uruchomi się recovery tego builda.
+2. **Factory Reset → Format data / factory reset** — *przed* sideloadem. Zrobiony *po* sideloadzie kasuje stan
+   snapshotów (`/metadata/ota`) i nowy slot nigdy nie wstanie (ląduje w recovery).
+3. **Apply Update → Apply from ADB**, na komputerze `adb -d sideload lineage-…-signed.zip`. Pytanie o dodatki: **No**.
+4. **Reboot system now** — bez żadnego dodatkowego resetu. Pierwszy rozruch trwa dłużej (scalanie snapshotów w tle).
+5. Zainstaluj ręcznie manager KernelSU-Next (patrz sekcja Root) — nie ma go w obrazie.
 
 > **Uwaga:** ten build jest podpisany własnymi kluczami, różnymi od kluczy oficjalnego LineageOS i od kluczy
-> testowych. Instalacja na urządzeniu z innym ROM-em (w tym oficjalnym LineageOS) wymaga pełnego
-> wyczyszczenia danych (`wipe`) — Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
+> testowych. Instalacja na urządzeniu z innym ROM-em (w tym z buildów Tomoms) wymaga pełnego wyczyszczenia danych —
+> Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
+
+Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje port Google Camera **LMC 8.4 R18 (Hasli)** z
+[konfiguracją dla Moto G52](https://www.celsoazevedo.com/files/android/google-camera/f/configs-hasli-02/) (`sahabulfinal.xml`,
+folder `LMC8.4/` w pamięci wewnętrznej; wczytanie: dwukrotne stuknięcie w pole obok migawki). Stockowa kamera Motoroli:
+w planach na kolejne buildy.
 
 ## Podziękowania
 
