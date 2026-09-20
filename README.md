@@ -172,10 +172,12 @@ Urządzenie ma Virtual A/B — **kolejność kroków ma znaczenie** (jest zgodna
 > testowych. Instalacja na urządzeniu z innym ROM-em (w tym z buildów Tomoms) wymaga pełnego wyczyszczenia danych —
 > Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
 
-Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje port Google Camera **LMC 8.4 R18 (Hasli)** z
-[konfiguracją dla Moto G52](https://www.celsoazevedo.com/files/android/google-camera/f/configs-hasli-02/) (`sahabulfinal.xml`,
-folder `LMC8.4/` w pamięci wewnętrznej; wczytanie: dwukrotne stuknięcie w pole obok migawki). Stockowa kamera Motoroli:
-w planach na kolejne buildy.
+Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje port Google Camera **LMC 8.4 R18F1 (Hasli)** z konfiguracją
+**`GcamG62.xml`** (Moto G62 — ten sam sensor Samsung JN1 i HAL Motoroli; z [listy Hasli R16+](https://www.celsoazevedo.com/files/android/google-camera/f/configs-hasli-02/)).
+Plik do folderu `LMC8.4/Configs/` w pamięci wewnętrznej; wczytanie: dwukrotne stuknięcie w pole obok migawki → Restore.
+**Pułapka:** wpis „Moto G52 → sahabulfinal.xml" na tej liście to w rzeczywistości konfiguracja z Moto G72 (MediaTek,
+`info_model_key = moto g72`) — na G52 daje całkowicie zielone zdjęcia; bez żadnej konfiguracji LMC 8.4 też jest zielony
+(HAL nie przekazuje wzmocnień AWB dla RAW). Stockowa kamera Motoroli: w planach na kolejne buildy.
 
 ## Podziękowania
 
