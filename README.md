@@ -177,7 +177,10 @@ Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje port Google Ca
 Plik do folderu `LMC8.4/Configs/` w pamięci wewnętrznej; wczytanie: dwukrotne stuknięcie w pole obok migawki → Restore.
 **Pułapka:** wpis „Moto G52 → sahabulfinal.xml" na tej liście to w rzeczywistości konfiguracja z Moto G72 (MediaTek,
 `info_model_key = moto g72`) — na G52 daje całkowicie zielone zdjęcia; bez żadnej konfiguracji LMC 8.4 też jest zielony
-(HAL nie przekazuje wzmocnień AWB dla RAW). Stockowa kamera Motoroli: w planach na kolejne buildy.
+(HAL nie przekazuje wzmocnień AWB dla RAW). **Wideo w LMC 8.4 nie działa** na tym ROM-ie (aplikacja wisi na czarnym
+ekranie): vendorowy enkoder OMX (`libOmxVenc.so`) zgłasza poziomy H.264/H.265 w surowym formacie v4l2, a LMC żąda
+konkretnego profilu/poziomu → `MediaCodec.configure` pada; `screenrecord` i **GCam BSG 9.7** (także H.265) nagrywają
+bez problemu, bo nie wymuszają poziomu. Zestaw: zdjęcia LMC 8.4, filmy BSG 9.7. Stockowa kamera Motoroli: w planach na kolejne buildy.
 
 ## Podziękowania
 
