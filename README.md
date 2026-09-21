@@ -172,15 +172,13 @@ Urządzenie ma Virtual A/B — **kolejność kroków ma znaczenie** (jest zgodna
 > testowych. Instalacja na urządzeniu z innym ROM-em (w tym z buildów Tomoms) wymaga pełnego wyczyszczenia danych —
 > Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
 
-Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje port Google Camera **LMC 8.4 R18F1 (Hasli)** z konfiguracją
-**`GcamG62.xml`** (Moto G62 — ten sam sensor Samsung JN1 i HAL Motoroli; z [listy Hasli R16+](https://www.celsoazevedo.com/files/android/google-camera/f/configs-hasli-02/)).
-Plik do folderu `LMC8.4/Configs/` w pamięci wewnętrznej; wczytanie: dwukrotne stuknięcie w pole obok migawki → Restore.
-**Pułapka:** wpis „Moto G52 → sahabulfinal.xml" na tej liście to w rzeczywistości konfiguracja z Moto G72 (MediaTek,
-`info_model_key = moto g72`) — na G52 daje całkowicie zielone zdjęcia; bez żadnej konfiguracji LMC 8.4 też jest zielony
-(HAL nie przekazuje wzmocnień AWB dla RAW). **Wideo w LMC 8.4 nie działa** na tym ROM-ie (aplikacja wisi na czarnym
-ekranie): vendorowy enkoder OMX (`libOmxVenc.so`) zgłasza poziomy H.264/H.265 w surowym formacie v4l2, a LMC żąda
-konkretnego profilu/poziomu → `MediaCodec.configure` pada; `screenrecord` i **GCam BSG 9.7** (także H.265) nagrywają
-bez problemu, bo nie wymuszają poziomu. Zestaw: zdjęcia LMC 8.4, filmy BSG 9.7. Stockowa kamera Motoroli: w planach na kolejne buildy.
+Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje Google Camera, ale **tylko porty z rodziny 8.4–8.6** —
+Snapdragon 680 (Cortex-A73, ARMv8.0) nie wykonuje bibliotek HDR+ z GCam 8.7+/9.x (instrukcje FP16 → `SIGILL`).
+Sprawdzony zestaw „jedna aplikacja do zdjęć i wideo": **MGC 8.6.263 (BSG)** + konfiguracja `MGC86-G52-final.xml`
+(strojenie z Redmi Note 11 — ten sam SoC i sensor JN1 — bez kluczy strumieni/wideo Xiaomi, które psują HAL Motoroli).
+Alternatywa do samych zdjęć: LMC 8.4 R18F1 + `GcamG62.xml` (wideo w LMC działa dopiero od builda z poprawką HAL-u
+wideo). Pułapka: wpis „Moto G52 → sahabulfinal.xml" na liście Hasli to konfig z Moto G72 (MediaTek) — zielone zdjęcia.
+Stockowa kamera Motoroli (MotCamera4 ze stocka A13): w testach jako moduł KernelSU.
 
 ## Podziękowania
 
