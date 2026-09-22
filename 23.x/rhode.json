@@ -1,13 +1,18 @@
-{
-  "response": [
-    {
-      "datetime": 1790067738,
-      "filename": "lineage-23.2-20260922-UNOFFICIAL-rhode-signed.zip",
-      "id": "e83ddcb37dbbe045655fda5786f6676bd87a1742",
-      "romtype": "UNOFFICIAL",
-      "size": 1278453003,
-      "url": "https://github.com/MikolajQ/rhode_releases/releases/download/20260922/lineage-23.2-20260922-UNOFFICIAL-rhode-signed.zip",
-      "version": "23.2"
-    }
-  ]
-}
+[
+  {
+    "datetime": 1790067738,
+    "files": [
+      {
+        "filename": "lineage-23.2-20260922-UNOFFICIAL-rhode-signed.zip",
+        "os_patch_level": "2026-09-01",
+        "os_sdk_level": 36,
+        "ota_property_files": "payload_metadata.bin:4109:107114,payload.bin:4109:1278445701,payload_properties.txt:1278449868:156,apex_info.pb:2075:1279,care_map.pb:3401:661,metadata:69:677,metadata.pb:814:1213",
+        "sha256": "83d8ded06b4f3341ab3637d410134e768bfe9a86a0c92681d878eeef8c815cb9",
+        "size": 1278453003,
+        "url": "https://github.com/MikolajQ/rhode_releases/releases/download/20260922/lineage-23.2-20260922-UNOFFICIAL-rhode-signed.zip"
+      }
+    ],
+    "type": "UNOFFICIAL",
+    "version": "23.2"
+  }
+]
