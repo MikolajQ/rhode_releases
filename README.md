@@ -14,10 +14,10 @@ naszym potrzebom (root, kontrola rodzicielska, prywatność sieciowa).
 ## Czego tu nie znajdziesz z domyślnego LineageOS
 
 Standardowy LineageOS jest celowo minimalistyczny — czysty AOSP plus garść ulepszeń Lineage (Trebuchet,
-Aperture, motyw). Ten build dokłada do tego cztery grupy rzeczy, których w oficjalnych buildach nie ma
-w ogóle: **root**, **usługi Google w wersji okrojonej i naprawionej**, **blokowanie treści wbudowane
-w system** oraz **przeglądarkę systemową skupioną na prywatności**. Do tego dziedziczy po drzewie źródłowym
-solidny pakiet optymalizacji wydajności i baterii, opisany niżej.
+Aperture, motyw). Ten build dokłada do tego trzy grupy rzeczy, których w oficjalnych buildach nie ma
+w ogóle: **root**, **usługi Google w wersji okrojonej i naprawionej** oraz **blokowanie treści wbudowane
+w system**. Do tego dziedziczy po drzewie źródłowym solidny pakiet optymalizacji wydajności i baterii,
+opisany niżej.
 
 ### Root: KernelSU-Next
 
@@ -70,20 +70,22 @@ zużywa żadnych dodatkowych zasobów:
    z transferem mediów, który inaczej skonfigurowana lista blokowałaby przypadkowo. Listę można rozszerzyć
    po zainstalowaniu roota (np. aplikacją AdAway).
 
-### Przeglądarka systemowa: Cromite zamiast domyślnej
+### Droid-ify zamiast F-Droida
 
-Systemowy WebView (silnik, którego używają wszystkie aplikacje pokazujące strony internetowe wewnątrz siebie)
-to **[Cromite](https://www.cromite.org/)** — fork Chromium z wbudowanym blokowaniem reklam i wzmocnioną
-prywatnością, zamiast standardowego WebView AOSP czy Google Chrome.
-
-### F-Droid gotowy do użycia
-
-Wbudowany oficjalny klient F-Droid ma od razu skonfigurowane trzy dodatkowe repozytoria — nie trzeba ich
-dodawać ręcznie:
+Zamiast oficjalnego klienta F-Droid (ciężki, toporny interfejs) build ma wbudowany
+**[Droid-ify](https://github.com/Droid-ify/client)** — lżejszy, szybszy klient tych samych repozytoriów.
+Od razu skonfigurowane trzy dodatkowe repozytoria — nie trzeba ich dodawać ręcznie:
 
 - **[IzzyOnDroid](https://apt.izzysoft.de/fdroid/)** — duży katalog aplikacji spoza głównego repozytorium F-Droid,
 - **[NewPipe](https://newpipe.net/)** — oficjalne repozytorium klienta YouTube/mediów bez reklam i śledzenia,
 - **[IronFox](https://ironfoxoss.org/)** — przeglądarka mobilna skupiona na prywatności.
+
+Droid-ify nie ma odpowiednika Privileged Extension (cichej instalacji jako uprzywilejowana aplikacja
+systemowa) — aktualizacje instaluje przez uprawnienia roota (KernelSU-Next), więc przy pierwszym użyciu
+trzeba mu przyznać dostęp w managerze roota.
+
+Systemowy WebView (silnik, którego używają wszystkie aplikacje pokazujące strony internetowe wewnątrz
+siebie) to standardowy, oficjalny prebuilt LineageOS — bez własnych modyfikacji.
 
 ### Własny kanał aktualizacji
 
@@ -107,11 +109,8 @@ wykraczający poza to, co oferuje czysty AOSP/LineageOS. Poniżej — pogrupowan
   przepływem programu w jądrze (ochrona przed konkretną klasą exploitów).
 - **Simple LMK** zamiast standardowego `lmkd` — lżejszy, szybszy mechanizm zabijania procesów przy niskiej
   pamięci.
-- **MGLRU (Multi-Generational LRU)** — nowocześniejszy algorytm zarządzania pamięcią podręczną stron w
-  jądrze, zmniejszający zacinanie się systemu przy dużym obciążeniu pamięci.
 - **TEO (Timer Events Oriented)** — governor cpuidle dobierający głębokość uśpienia rdzeni CPU na podstawie
   nadchodzących zdarzeń czasowych, zamiast prostych heurystyk.
-- Binder backportowany z nowszego jądra (Linux 5.4) — szybsza komunikacja międzyprocesowa.
 - Strojenie schedulera WALT: progi migracji zadań między rdzeniami wydajnymi/oszczędnymi (`sched_upmigrate`/
   `sched_downmigrate`), krzywe governora `schedutil` (`hispeed_freq`, `hispeed_load`) dobrane osobno dla
   wariantu SoC tego urządzenia.
@@ -148,9 +147,10 @@ wykraczający poza to, co oferuje czysty AOSP/LineageOS. Poniżej — pogrupowan
   szanujące prywatność (m.in. pool.ntp.org, serwery GrapheneOS) — telefon nie odpytuje infrastruktury
   Google przy każdym starcie i połączeniu z siecią, nawet bez konta Google.
 - Wbudowana obsługa wielu dostawców prywatnego DNS (DNS-over-TLS) do wyboru w ustawieniach.
-- Wsparcie Play Integrity (przechodzi weryfikację integralności Google przy dostarczeniu własnego pliku
-  `keybox.xml` w Ustawieniach → Lineage Extras) — aplikacje bankowe i inne wymagające certyfikacji
-  działają normalnie mimo niestandardowego systemu.
+- **Play Integrity BASIC/DEVICE** przez wbudowany profil PropImitationHooks (świeży, nie-beta fingerprint
+  Pixela — starsze, betowe profile Google od pewnego czasu odrzuca nawet na poziomie DEVICE). Poziom
+  **STRONG** (sprzętowa atestacja) wymaga własnego, prawdziwego `keybox.xml` w Ustawieniach → Lineage
+  Extras — bez niego apki wymagające STRONG mogą nie przechodzić certyfikacji.
 
 ---
 
@@ -172,20 +172,21 @@ Urządzenie ma Virtual A/B — **kolejność kroków ma znaczenie** (jest zgodna
 > testowych. Instalacja na urządzeniu z innym ROM-em (w tym z buildów Tomoms) wymaga pełnego wyczyszczenia danych —
 > Android nie pozwala nadpisać danych aplikacji podpisanych innym kluczem.
 
-Aparat: w obrazie jest Aperture (LineageOS). Lepsze zdjęcia daje Google Camera, ale **tylko porty z rodziny 8.4–8.6** —
+Aparat: w obrazie są **Aperture** (LineageOS) i **Moto Camera stockowa** (MotCamera4 + MotCamera3AI + MotoSignature,
+wyciągnięte z oficjalnego firmware'u Motoroli) — wszystkie obiektywy, portret, noc, wideo HEVC działają;
+jedyny brak to tryb Ultra-Res 50 MP (wymaga mechanizmu z cameraservice Motoroli, którego LineageOS nie ma).
+Lepsze zdjęcia w słabym świetle daje Google Camera z ręki, ale **tylko porty z rodziny 8.4–8.6** —
 Snapdragon 680 (Cortex-A73, ARMv8.0) nie wykonuje bibliotek HDR+ z GCam 8.7+/9.x (instrukcje FP16 → `SIGILL`).
 Sprawdzony zestaw „jedna aplikacja do zdjęć i wideo": **MGC 8.6.263 (BSG)** + konfiguracja `MGC86-G52-final.xml`
 (strojenie z Redmi Note 11 — ten sam SoC i sensor JN1 — bez kluczy strumieni/wideo Xiaomi, które psują HAL Motoroli).
-Alternatywa do samych zdjęć: LMC 8.4 R18F1 + `GcamG62.xml` (wideo w LMC działa dopiero od builda z poprawką HAL-u
-wideo). Pułapka: wpis „Moto G52 → sahabulfinal.xml" na liście Hasli to konfig z Moto G72 (MediaTek) — zielone zdjęcia.
-Stockowa kamera Motoroli (MotCamera4 ze stocka A13): w testach jako moduł KernelSU.
+Pułapka: wpis „Moto G52 → sahabulfinal.xml" na liście Hasli to konfig z Moto G72 (MediaTek) — zielone zdjęcia.
 
 ## Podziękowania
 
 Ten build nie powstałby bez pracy zespołu [LineageOS](https://lineageos.org/), maintainera drzewa źródłowego
 [Tomoms](https://github.com/tomoms), projektów [KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next),
-[Cromite](https://www.cromite.org/), [MindTheGapps](https://gitlab.com/MindTheGapps), [NikGapps](https://nikgapps.com/),
-[F-Droid](https://f-droid.org/), oraz społeczności [StevenBlack/hosts](https://github.com/StevenBlack/hosts) i
+[Droid-ify](https://github.com/Droid-ify/client), [MindTheGapps](https://gitlab.com/MindTheGapps),
+[NikGapps](https://nikgapps.com/), oraz społeczności [StevenBlack/hosts](https://github.com/StevenBlack/hosts) i
 [AdGuard](https://adguard-dns.io/).
 
 ---
