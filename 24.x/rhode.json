@@ -1,0 +1,18 @@
+[
+  {
+    "datetime": 1792143182,
+    "files": [
+      {
+        "filename": "lineage-24.0-20261016-UNOFFICIAL-rhode-signed.zip",
+        "os_patch_level": "2026-10-01",
+        "os_sdk_level": 37,
+        "ota_property_files": "payload_metadata.bin:4287:135699,payload.bin:4287:1672607099,payload_properties.txt:1672611444:156,apex_info.pb:2079:1448,care_map.pb:3574:666,metadata:69:677,metadata.pb:814:1217",
+        "sha256": "5777479a861dc88173e6463ed28a4f06327d2d00a9fb534a3954a3d0510037f8",
+        "size": 1672614579,
+        "url": "https://github.com/MikolajQ/rhode_releases/releases/download/20261016/lineage-24.0-20261016-UNOFFICIAL-rhode-signed.zip"
+      }
+    ],
+    "type": "UNOFFICIAL",
+    "version": "24.0"
+  }
+]
